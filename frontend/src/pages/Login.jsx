@@ -1,72 +1,75 @@
-import React, { useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
-import { useNavigate } from "react-router-dom";
-
+import React, { useState } from 'react';
+import axiosInstance from '../api/Api';
+import { useNavigate } from 'react-router-dom';
+import logo from  "../assets/ridemate.svg"
+import useAuthStore from '../store/useAuthStore';
 const Login = () => {
-  const { login } = useAuthStore();
+ const [formData,setFormData]=useState({email:"",password:""});
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: "", password: "" });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+  const {login}=useAuthStore();
   const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent page reload
-    console.log(formData)
-    await login(formData);
-    navigate("/");
+    e.preventDefault();
+    
+   await   login(formData);
+   navigate("/");
   };
+
 
   return (
-    <div className="flex h-screen justify-center items-center">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 border border-gray-300 p-6 rounded-2xl shadow-md"
-      >
-        <div className="relative">
-          <label
-            htmlFor="email"
-            className="absolute -top-2 left-2 bg-white px-1 font-semibold text-xs"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="john@example.com"
-            value={formData.email}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 rounded-lg w-64"
+    <div className="flex min-h-screen items-center justify-center  px-6 py-12 ">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <img
+            src={logo}
+            alt="Logo"
+            className="mx-auto  w-auto h-20"
           />
+          <h2 className="mt-6 text-2xl font-bold text-white">Sign in to your account</h2>
         </div>
 
-        <div className="relative">
-          <label
-            htmlFor="password"
-            className="absolute -top-2 left-2 bg-white px-1 font-semibold text-xs"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="••••••••"
-            value={formData.password}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 rounded-lg w-64"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6  p-6 rounded-lg shadow-lg border border-gray-300">
+          {error && <p className="text-red-400 text-sm">{error}</p>}
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          Login
-        </button>
-      </form>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-500">
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="mt-2 block w-full rounded-md px-3 py-2  border  border-gray-300 placeholder-gray-400 focus:outline-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-500">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              name='password'
+              required
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="mt-2 block w-full rounded-md  px-3 py-2  placeholder-gray-400 focus:outline-indigo-500 border border-gray-300"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-[#0F9D8E] rounded-md text-white font-semibold hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          >
+            Sign In
+          </button>
+        </form>
+
+      </div>
     </div>
   );
 };

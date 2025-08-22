@@ -4,6 +4,7 @@ const Ride = require("../models/Ride");
 const BookingInstance = require("../models/BookingInstance");
 
 const BookRide = asyncHandler(async (req, res) => {
+  console.log(req.body)
   const { RideId, passengers } = req.body;
   console.log("RideId:", RideId);
 
@@ -27,6 +28,7 @@ const BookRide = asyncHandler(async (req, res) => {
   });
 
   // update available seats
+  ride.seatsTaken=passengers;
   ride.seatsAvailable -= passengers;
   await ride.save();
 

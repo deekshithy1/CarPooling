@@ -1,33 +1,31 @@
-const mongoose=require("mongoose");
-const jwt=require("jsonwebtoken");
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const asyncHandler=require("express-async-handler")
+const asyncHandler = require("express-async-handler");
 
- const  protect=asyncHandler(async(req,res,next)=>{
+const protect = asyncHandler(async (req, res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    let token;
-    if(req.headers.authorization &&req.headers.authorization.startsWith("Bearer")){
-        try{
-            token= req.headers.authorization.split(" ")[1];
-            const decoded=jwt.verify(token,process.env.JWT_SECRET);
-            req.user=await User.findById(decoded.id);
-            if (!req.user) {
-                res.status(401);
-                throw new Error("User not found");
-              }
-              next();
+      req.user = await User.findById(decoded.id).select("-password");
+     
+      if (!req.user) {
+        res.status(401);
+        throw new Error("User not found");
+      }
 
-        }
-        catch(err){
-            res.status(401);
-            throw new Error("Not authorized, token failed");
+      next();
+    } catch (err) {
+      res.status(401);
+      throw new Error("Not authorized, token failed");
     }
-
-}else {
+  } else {
     res.status(401);
     throw new Error("Not authorized, no token");
   }
 });
 
-
-module.exports={protect};
+module.exports = { protect };

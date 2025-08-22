@@ -1,45 +1,34 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Route,Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
-import PublishRide from './pages/PublishRide'
-import SearchRide from './pages/SearchRide'
 import Login from './pages/Login'
+import useAuthStore from './store/useAuthStore'
+
+import SearchRides from './components/Rides/SearchRidesForm'
 import Rides from './pages/Rides'
-import { useAuthStore } from './store/useAuthStore'
-
-
-
-
-
+import PublishRide from './pages/PublishRide'
 function App() {
-
-  const {user,token}=useAuthStore();
-    
+  const [count, setCount] = useState(0)
+  const {getUser,user,token}= useAuthStore();
   useEffect(()=>{
-    if(token &&!user){
-    
-    }
 
-  },[]);
-
-
-
-
+  },[])
   return (
-   <BrowserRouter>
+     <BrowserRouter>
+  
      <Routes>
-   <Route path='/' element={<Layout/>}>
-    <Route path='/' element={<Home/>}/>
-    <Route path='/PublishRide' element={<PublishRide/>}/>
-    <Route path='/SearchRide' element={<SearchRide/>}/>
-    <Route path='/Login' element={<Login/>}/>
-    <Route path='/Rides' element={<Rides/>}/>
-   </Route>
+
+      <Route path='/' element={<Layout/>}>
+     <Route index element={<Home/>}/>
+     <Route path='/login' element={<Login/>}/>
+     <Route path='/Rides' element={<Rides/>}/>
+     <Route path='/PublishRide' element={<PublishRide/>}/>
+      </Route>
 
      </Routes>
-    
-   </BrowserRouter>
+ 
+     </BrowserRouter>
   )
 }
 

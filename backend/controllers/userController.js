@@ -5,7 +5,7 @@ const asyncHandler = require("express-async-handler"); // ensure you imported th
 
 const Login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
- console.log(req.body)
+
 
   const user = await User.findOne({ email });
   if (!user) {
@@ -37,7 +37,9 @@ const Login = asyncHandler(async (req, res) => {
 
 const Signup=asyncHandler(async(req,res)=>{
     const {Name,password,mobileNumber,email}=req.body;
-    const user=await User.find({email:email}||{mobileNumber:mobileNumber});
+    const user=await User.findOne({
+      $or: [{ email }, { mobileNumber }],
+    });
     if(user){
         res.status(409).json({message:"Details already exist"});
     }
@@ -58,7 +60,9 @@ const Signup=asyncHandler(async(req,res)=>{
 
 
 const getLoggedInuser=asyncHandler(async(req,res)=>{
+  console.log(req.user.id)
        let user=await User.findById(req.user.id).select("-password");
+
        if (!user) {
         res.status(404);
         throw new Error("User not found");
@@ -66,4 +70,4 @@ const getLoggedInuser=asyncHandler(async(req,res)=>{
       res.json(user);
     
 })
-module.exports ={ Login,Signup};
+module.exports ={ Login,Signup,getLoggedInuser};

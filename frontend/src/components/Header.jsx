@@ -1,40 +1,39 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { PlusCircle, Search } from 'lucide-react';
-
-const navLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/PublishRide', label: 'Publish a Ride', icon: <PlusCircle className="w-4 ml-1" aria-label="plus" /> },
-  { to: '/SearchRide', label: 'Search for Rides', icon: <Search className="w-4 ml-1" aria-label="search" /> },
-];
+import React from "react";
+import { Link } from "react-router-dom";
+import { CirclePlus, Search } from "lucide-react";
+import Logo from "../assets/ridemate.svg";
 
 const Header = () => {
-  const location = useLocation();
-
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="flex items-center justify-between py-4 px-6 ">
-        <div className="text-xl font-bold">RideMate</div>
+    <header className="bg-white shadow-lg border-b border-gray-200 py-2">
+      <div className="flex items-center justify-between px-4 md:px-8">
+        {/* Logo */}
+        <Link to='/'>
+        <img src={Logo} alt="Ridemate Logo" className="w-28 md:w-32" />
+</Link>
+        {/* Navigation Links */}
+        <nav className="hidden md:flex w-1/3 justify-between text-sm font-medium">
+          <Link
+            to="/Rides"
+            className="flex items-center gap-1 text-[#0F9D8E] hover:text-black transition-colors duration-300"
+          >
+            <Search className="w-4 h-4" />
+            Search a Ride
+          </Link>
 
-        <nav className="flex space-x-6">
-          {navLinks.map(({ to, label, icon }) => (
-            <Link
-              key={to}
-              to={to}
-              className={`flex items-center  font-light border-b-2 ${
-                location.pathname === to ? 'border-black' : 'border-transparent'
-              } hover:border-blue-400 hover:bg-gray-200 hover:rounded-2xl transition-all`}
-            >
-              {label} {icon}
-            </Link>
-          ))}
+          <Link
+            to="/PublishRide"
+            className="flex items-center gap-1 text-[#0F9D8E] hover:text-black transition-colors duration-300"
+          >
+            Publish a Ride
+            <CirclePlus className="w-4 h-4" />
+          </Link>
         </nav>
 
-        <Link to="/Login">
-          <button className="bg-red-400 text-white px-5 py-2 rounded-2xl hover:bg-red-500 transition-colors">
-            Login
-          </button>
-        </Link>
+        {/* Logout Button */}
+        <button className="bg-[#0F9D8E] text-white px-4 py-2 rounded-lg text-sm md:text-base hover:bg-[#0c7e71] transition-colors">
+          Logout
+        </button>
       </div>
     </header>
   );

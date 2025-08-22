@@ -1,40 +1,68 @@
 import { create } from "zustand";
-import axiosInstance from "../api/Api.js";
+import axiosInstance from "../api/Api";
 
 export const useRideStore = create((set, get) => ({
   availableRides: [],
   loading: false,
-
+  suggestions:[],
   getAvailableRides: async (data) => {
-    // If no data passed, try from localStorage
     let searchData = data;
+
+    // If no new data passed, try from localStorage
     if (!searchData) {
       const saved = localStorage.getItem("rideSearch");
       if (saved) searchData = JSON.parse(saved);
     }
+     
+    // If still nothing, just return
+    if (!searchData) return;
 
-    if (!searchData) return; // nothing to search
-
-    // Save latest search to localStorage
+    // Save the latest search for persistence
     localStorage.setItem("rideSearch", JSON.stringify(searchData));
 
-    set({ loading: true });
+    set({ loading: true }); // start loading
+
     try {
       const res = await axiosInstance.get("/Ride/getRideBySearch", {
-        params: searchData,
+        params: searchData, // ✅ use searchData
       });
-      set({ availableRides: res.data });
+
+      set({ availableRides: res.data, loading: false });
     } catch (err) {
-      console.error(err);
-    } finally {
+      console.log(err);
       set({ loading: false });
     }
   },
-  bookRide:async(data)=>{
-       try{
-        const res=await axiosInstance.post("/Ride/BookRide",data)
-       }catch(err){
-        console.log(err)
-       }
+  bookRide:async(RideId,passengers)=>{
+
+   console.log(RideId,passengers)
+    try{
+        const res=axiosInstance.post("/Ride/BookRide",{RideId,passengers});
+        
+    }
+    catch(err){
+        console.log(err);
+    }
+
+  },
+  clearRideStore:()=>{
+    set({ availableRides: [], loading: false });
+    localStorage.removeItem("rideSearch");
+  },
+  fetchLocation:async(input)=>{
+    if(!input || input.length < 3) return [];
+      console.log(input)
+     try{
+        const res=await axiosInstance.get("/maps/get-suggestions",{
+            params:{input}
+        });
+
+        // return res.data.suggestions;
+        set({ suggestions: res.data.predictions });
+     }
+     catch(err){
+        console.log(err);
+     };
+
   }
 }));
